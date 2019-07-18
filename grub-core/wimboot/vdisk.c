@@ -41,7 +41,7 @@
  * @v len               Length
  */
 void read_mem_file ( struct vdisk_file *file, void *data, size_t offset, size_t len ) {
-    memcpy ( data, ( file->opaque + offset ), len );
+    memcpy ( data, (void *) ( (char *) file->opaque + offset ), len );
 }
 
 /** Virtual files */
@@ -406,7 +406,7 @@ static void vdisk_dir_files ( uint64_t lba, unsigned int count, void *data ) {
     struct vdisk_file *file;
     unsigned int idx;
 
-    for ( ; count ; lba++, count--, data += VDISK_SECTOR_SIZE ) {
+    for ( ; count ; lba++, count--, data = (char *) data + VDISK_SECTOR_SIZE ) {
 
         /* Initialise directory */
         dir = data;
@@ -457,7 +457,7 @@ static void vdisk_file ( uint64_t lba, unsigned int count, void *data ) {
 
     /* Zero any uninitialised-data portion */
     pad_len = ( len - copy_len );
-    memset ( ( data + copy_len ), 0, pad_len );
+    memset ( ( (char *) data + copy_len ), 0, pad_len );
 
     /* Patch any applicable portion */
     patch_len = ( ( offset < file->xlen ) ? ( file->xlen - offset ) : 0 );
@@ -618,7 +618,7 @@ void vdisk_read ( uint64_t lba, unsigned int count, void *data ) {
 
         /* Move to next fragment */
         frag_start += frag_count;
-        data += ( frag_count * VDISK_SECTOR_SIZE );
+        data = (char *) data + ( frag_count * VDISK_SECTOR_SIZE );
 
     } while ( frag_start != end );
 

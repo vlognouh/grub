@@ -67,7 +67,7 @@ static unsigned long cpio_value ( const char *field ) {
 int cpio_extract ( void *data, size_t len,
 		   int ( * file ) ( const char *name, void *data,
 				    size_t len ) ) {
-	const struct newc_header *cpio;
+	const struct newc_head *cpio;
 	const uint32_t *pad;
 	void *file_data;
 	size_t file_name_len;
@@ -82,7 +82,7 @@ int cpio_extract ( void *data, size_t len,
 			pad = data;
 			if ( *pad )
 				break;
-			data += sizeof ( *pad );
+			data = (char *) data + sizeof ( *pad );
 			len -= sizeof ( *pad );
 		}
 
@@ -109,10 +109,10 @@ int cpio_extract ( void *data, size_t len,
 		char file_name[ file_name_len + 1 ];
 		memcpy ( file_name, ( char * ) ( cpio + 1 ), file_name_len);
 		file_name[ file_name_len ] = '\0';
-		file_data = ( data + cpio_align ( sizeof ( *cpio ) +
+		file_data = ( (char *) data + cpio_align ( sizeof ( *cpio ) +
 						  file_name_len ) );
 		file_len = cpio_value ( cpio->filesize );
-		cpio_len = ( file_data + file_len - data );
+		cpio_len = ( (char *) file_data + file_len - (char *) data );
 		if ( cpio_len < len )
 			cpio_len = cpio_align ( cpio_len );
 		if ( cpio_len > len ) {
@@ -129,7 +129,7 @@ int cpio_extract ( void *data, size_t len,
 			return rc;
 
 		/* Move to next file */
-		data += cpio_len;
+		data = (char *) data + cpio_len;
 		len -= cpio_len;
 	}
 }

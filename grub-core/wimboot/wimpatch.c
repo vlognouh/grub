@@ -107,7 +107,7 @@ struct wim_patch_dir_entry {
     /** Directory entry */
     struct wim_directory_entry dir;
     /** Name */
-    wchar_t name[ VDISK_NAME_LEN + 1 /* wNUL */ ];
+    char16_t name[ VDISK_NAME_LEN + 1 /* wNUL */ ];
 } __attribute__ (( packed ));
 
 /** A directory containing injected files */
@@ -251,7 +251,7 @@ static int wim_patch_header ( struct wim_patch *patch,
         DBG ( "...patched WIM %s boot index %d->%d\n", region->name,
               patch->boot_index, patch->header.boot_index );
     }
-    memcpy ( data, ( ( ( void * ) &patch->header ) + offset ), len );
+    memcpy ( data, ( ( ( char * ) &patch->header ) + offset ), len );
 
     return 0;
 }
@@ -325,7 +325,7 @@ static int wim_patch_lookup_boot ( struct wim_patch *patch,
          sizeof ( entry.resource ) );
 
     /* Copy lookup table entry */
-    memcpy ( data, ( ( ( void * ) &entry ) + offset ), len );
+    memcpy ( data, ( ( ( char * ) &entry ) + offset ), len );
 
     return 0;
 }
@@ -360,7 +360,7 @@ static int wim_patch_lookup_file ( struct wim_patch *patch __unused,
     wim_hash ( vfile, &entry.hash );
 
     /* Copy lookup table entry */
-    memcpy ( data, ( ( ( void * ) &entry ) + offset ), len );
+    memcpy ( data, ( ( ( char * ) &entry ) + offset ), len );
     DBG ( "...patched WIM %s %s\n", region->name, vfile->name );
 
     return 0;
@@ -410,7 +410,7 @@ static int wim_patch_dir_subdir ( struct wim_patch *patch,
     assert ( len <= ( sizeof ( subdir ) - offset ) );
 
     /* Copy subdirectory offset */
-    memcpy ( data, ( ( ( void * ) &subdir ) + offset ), len );
+    memcpy ( data, ( ( ( char * ) &subdir ) + offset ), len );
     DBG ( "...patched WIM %s %s 0x%llx\n", region->name, dir->name,
           ( patch->header.boot.offset + subdir ) );
 
@@ -478,7 +478,7 @@ static int wim_patch_dir_file ( struct wim_patch *patch __unused,
         entry.name[i] = vfile->name[i];
 
     /* Copy directory entry */
-    memcpy ( data, ( ( ( void * ) &entry ) + offset ), len );
+    memcpy ( data, ( ( ( char * ) &entry ) + offset ), len );
     DBG ( "...patched WIM %s %s\n", region->name, vfile->name );
 
     return 0;
@@ -508,7 +508,7 @@ static int wim_patch_region ( struct wim_patch *patch,
          ( region->offset - offset ) : 0 );
     if ( skip >= len )
         return 0;
-    data += skip;
+    data = (char *) data + skip;
     offset += skip;
     len -= skip;
 
@@ -723,7 +723,7 @@ static int wim_construct_patch ( struct vdisk_file *file,
 
     /* Locate directory containing injected files */
     patch->dir.name = cmdline_inject_dir;
-    wchar_t w_inject_dir[strlen(cmdline_inject_dir) + 1];
+    char16_t w_inject_dir[strlen(cmdline_inject_dir) + 1];
 	mbstowcs ( w_inject_dir, cmdline_inject_dir, strlen(cmdline_inject_dir) + 1 );
     if ( ( rc = wim_path ( file, &patch->header, &patch->boot,
                    w_inject_dir, &patch->dir.parent,

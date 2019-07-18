@@ -28,6 +28,9 @@
  */
 
 #include <stdint.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 
 typedef void mbstate_t;
 
@@ -42,18 +45,33 @@ typedef void mbstate_t;
  * This is a stub implementation, sufficient to handle basic ASCII
  * characters.
  */
-static inline size_t wcrtomb ( char *buf, wchar_t wc,
+static inline size_t wcrtomb ( char *buf, char16_t wc,
                    mbstate_t *ps __attribute__ (( unused )) ) {
     *buf = wc;
     return 1;
 }
 
-static inline size_t mbstowcs ( wchar_t *dst, const char *src,
+static inline char16_t* c8_to_c16 ( const char *str)
+{
+    int len = (strlen (str) + 1) * sizeof (char16_t);
+    char16_t *ret = NULL;
+    char16_t *p16;
+    char *p8 = (char *) str;
+    ret = p16 = malloc (len);
+    if (!ret)
+        return NULL;
+    while (*p8)
+        *(p16++) = *(p8++);
+    *p16 = 0;
+    return ret;
+}    
+
+static inline size_t mbstowcs ( char16_t *dst, const char *src,
                    size_t size ) {
     if ( !dst || !src )
         return 0;
     char *p;
-    wchar_t *q;
+    char16_t *q;
     size_t i;
     p = (char *) src;
     q = dst;
@@ -62,12 +80,12 @@ static inline size_t mbstowcs ( wchar_t *dst, const char *src,
         if ( *p == '\0' )
             break;
     }
-    *q = L'\0';
+    *q = 0;
     return i;
 }
 
-extern int wwcscasecmp ( const wchar_t *str1, const wchar_t *str2 );
-extern size_t wwcslen ( const wchar_t *str );
-extern wchar_t * wcschr ( const wchar_t *str, wchar_t c );
+extern int wwcscasecmp ( const char16_t *str1, const char16_t *str2 );
+extern size_t wwcslen ( const char16_t *str );
+extern char16_t * wcschr ( const char16_t *str, char16_t c );
 
 #endif /* _WCHAR_H */

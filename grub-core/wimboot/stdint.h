@@ -44,7 +44,6 @@ typedef grub_addr_t intptr_t;
 typedef grub_size_t size_t;
 typedef grub_ssize_t ssize_t;
 
-typedef grub_uint16_t wchar_t;
-typedef grub_uint16_t wint_t;
+typedef grub_uint16_t char16_t;
 
 #endif /* _STDINT_H */

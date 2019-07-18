@@ -277,7 +277,7 @@ int wim_read ( struct vdisk_file *file, struct wim_header *header,
         memcpy ( data, ( wim_chunk_buffer.data + skip_len ), frag_len );
 
         /* Move to next chunk */
-        data += frag_len;
+        data = (char *) data + frag_len;
         offset += frag_len;
         len -= frag_len;
     }
@@ -381,9 +381,9 @@ int wim_metadata ( struct vdisk_file *file, struct wim_header *header,
  */
 static int wim_direntry ( struct vdisk_file *file, struct wim_header *header,
               struct wim_resource_header *meta,
-              const wchar_t *name, size_t *offset,
+              const char16_t *name, size_t *offset,
               struct wim_directory_entry *direntry ) {
-    wchar_t name_buf[ wwcslen ( name ) + 1 /* NUL */ ];
+    char16_t name_buf[ wwcslen ( name ) + 1 /* NUL */ ];
     int rc;
     DBG ( "...get directory entry\n" );
     
@@ -419,7 +419,7 @@ static int wim_direntry ( struct vdisk_file *file, struct wim_header *header,
         }
 
         /* Check name */
-        if ( wwcscasecmp ( name, (const wchar_t *)name_buf ) != 0 ) {
+        if ( wwcscasecmp ( name, (const char16_t *)name_buf ) != 0 ) {
             continue;
         }
 
@@ -440,12 +440,12 @@ static int wim_direntry ( struct vdisk_file *file, struct wim_header *header,
  * @ret rc        Return status code
  */
 int wim_path ( struct vdisk_file *file, struct wim_header *header,
-           struct wim_resource_header *meta, const wchar_t *path,
+           struct wim_resource_header *meta, const char16_t *path,
            size_t *offset, struct wim_directory_entry *direntry ) {
-    wchar_t path_copy[ wwcslen ( path ) + 1 /* WNUL */ ];
+    char16_t path_copy[ wwcslen ( path ) + 1 /* WNUL */ ];
     struct wim_security_header security;
-    wchar_t *name;
-    wchar_t *next;
+    char16_t *name;
+    char16_t *next;
     int rc;
     DBG ( "...get directory entry for a path\n" );
 
@@ -485,7 +485,7 @@ int wim_path ( struct vdisk_file *file, struct wim_header *header,
  * @ret rc        Return status code
  */
 int wim_file ( struct vdisk_file *file, struct wim_header *header,
-           struct wim_resource_header *meta, const wchar_t *path,
+           struct wim_resource_header *meta, const char16_t *path,
            struct wim_resource_header *resource ) {
     struct wim_directory_entry direntry;
     struct wim_lookup_entry entry;

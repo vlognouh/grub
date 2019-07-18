@@ -53,13 +53,8 @@ struct efi_block {
  * @ret efirc        EFI status code
  */
 static grub_efi_status_t
-efi_reset_blocks ( grub_efi_block_io_t *this, grub_efi_boolean_t extended ) {
-    struct efi_block *block =
-        container_of ( this, struct efi_block, block );
-    void *retaddr = __builtin_return_address ( 0 );
-
-    DBG ( "EFI %s %sreset -> %p\n",
-           block->name, ( extended ? "extended " : "" ), retaddr );
+efi_reset_blocks ( grub_efi_block_io_t *this __unused,
+                   grub_efi_boolean_t extended __unused ) {
     return 0;
 }
 
@@ -100,12 +95,6 @@ static grub_efi_status_t
 efi_write_blocks ( grub_efi_block_io_t *this __unused,
            grub_efi_uint32_t media __unused, grub_efi_lba_t lba __unused,
            grub_efi_uintn_t len __unused, void *data __unused ) {
-    struct efi_block *block =
-        container_of ( this, struct efi_block, block );
-    void *retaddr = __builtin_return_address ( 0 );
-
-    DBG ( "EFI %s write media %08x LBA 0x%llx from %p+%lx -> %p\n",
-           block->name, media, lba, data, ( ( size_t ) len ), retaddr );
     return GRUB_EFI_WRITE_PROTECTED;
 }
 
@@ -116,12 +105,7 @@ efi_write_blocks ( grub_efi_block_io_t *this __unused,
  * @ret efirc        EFI status code
  */
 static grub_efi_status_t
-efi_flush_blocks ( grub_efi_block_io_t *this ) {
-    struct efi_block *block =
-        container_of ( this, struct efi_block, block );
-    void *retaddr = __builtin_return_address ( 0 );
-
-    DBG ( "EFI %s flush -> %p\n", block->name, retaddr );
+efi_flush_blocks ( grub_efi_block_io_t *this __unused ) {
     return 0;
 }
 
@@ -287,8 +271,7 @@ static struct {
     grub_efi_hard_drive_device_path_t hd;
     struct {
         grub_efi_device_path_t header;
-        grub_efi_char16_t name[ sizeof ( EFI_REMOVABLE_MEDIA_FILE_NAME ) /
-                 sizeof ( grub_efi_char16_t ) ];
+        grub_efi_char16_t name[ EFI_BOOT_FILE_NAME_LEN ];
     } GRUB_PACKED file;
     grub_efi_device_path_protocol_t end;
 } GRUB_PACKED efi_bootmgfw_path = {
@@ -299,7 +282,7 @@ static struct {
         .header = EFI_DEVPATH_INIT ( efi_bootmgfw_path.file,
                          MEDIA_DEVICE_PATH,
                          MEDIA_FILEPATH_DP ),
-        .name = EFI_REMOVABLE_MEDIA_FILE_NAME,
+        .name = EFI_BOOT_FILE_NAME,
     },
     .end = EFI_DEVPATH_END_INIT ( efi_bootmgfw_path.end ),
 };

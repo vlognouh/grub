@@ -38,7 +38,7 @@
  * @v str2        Second string
  * @ret diff        Difference
  */
-int wwcscasecmp ( const wchar_t *str1, const wchar_t *str2 ) {
+int wwcscasecmp ( const char16_t *str1, const char16_t *str2 ) {
     int c1;
     int c2;
 
@@ -56,7 +56,7 @@ int wwcscasecmp ( const wchar_t *str1, const wchar_t *str2 ) {
  * @v str        String
  * @ret len        Length (in characters)
  */
-size_t wwcslen ( const wchar_t *str ) {
+size_t wwcslen ( const char16_t *str ) {
     size_t len = 0;
 
     while ( *(str++) )
@@ -71,11 +71,11 @@ size_t wwcslen ( const wchar_t *str ) {
  * @v c            Wide character
  * @ret first        First occurrence of wide character in string, or NULL
  */
-wchar_t * wcschr ( const wchar_t *str, wchar_t c ) {
+char16_t * wcschr ( const char16_t *str, char16_t c ) {
 
     for ( ; *str ; str++ ) {
         if ( *str == c )
-            return ( ( wchar_t * )str );
+            return ( ( char16_t * )str );
     }
     return NULL;
 }

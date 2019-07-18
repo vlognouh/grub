@@ -37,10 +37,7 @@
 grub_efi_device_path_protocol_t * efi_devpath_end ( grub_efi_device_path_protocol_t *path ) {
 
     while ( path->type != GRUB_EFI_END_DEVICE_PATH_TYPE ) {
-        path = ( ( ( void * ) path ) +
-             /* There's this amazing new-fangled thing known as
-              * a UINT16, but who wants to use one of those? */
-             path->length );
+        path = (grub_efi_device_path_protocol_t *)( ( char * ) path + path->length );
     }
     return path;
 }

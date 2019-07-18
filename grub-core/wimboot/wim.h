@@ -184,10 +184,10 @@ extern int wim_read ( struct vdisk_file *file, struct wim_header *header,
               struct wim_resource_header *resource, void *data,
               size_t offset, size_t len );
 extern int wim_path ( struct vdisk_file *file, struct wim_header *header,
-              struct wim_resource_header *meta, const wchar_t *path,
+              struct wim_resource_header *meta, const char16_t *path,
               size_t *offset, struct wim_directory_entry *direntry );
 extern int wim_file ( struct vdisk_file *file, struct wim_header *header,
-              struct wim_resource_header *meta, const wchar_t *path,
+              struct wim_resource_header *meta, const char16_t *path,
               struct wim_resource_header *resource );
 extern int wim_dir_len ( struct vdisk_file *file, struct wim_header *header,
              struct wim_resource_header *meta, size_t offset,

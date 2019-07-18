@@ -38,7 +38,14 @@
 #include <grub/term.h>
 
 /** bootmgfw.efi path within WIM */
-static const wchar_t bootmgfw_path[] = L"\\Windows\\Boot\\EFI\\bootmgfw.efi";
+// \\Windows\\Boot\\EFI\\bootmgfw.efi
+static const char16_t bootmgfw_path[] = {
+    0x5c, 0x57, 0x69, 0x6e, 0x64, 0x6f, 0x77, 0x73, 
+    0x5c, 0x42, 0x6f, 0x6f, 0x74,
+    0x5c, 0x45, 0x46, 0x49,
+    0x5c, 0x62, 0x6f, 0x6f, 0x74, 0x6d, 0x67, 0x66, 0x77, 0x2e, 0x65, 0x66, 0x69,
+    0x00
+};
 
 /** bootmgfw.efi file */
 struct vdisk_file *bootmgfw;
@@ -49,12 +56,12 @@ struct vdisk_file *bootmgfw;
  * @ret bootarch    Architecture-specific boot filename
  */
 static const grub_efi_char16_t * efi_bootarch ( void ) {
-    static const grub_efi_char16_t bootarch_full[] = EFI_REMOVABLE_MEDIA_FILE_NAME;
+    static const grub_efi_char16_t bootarch_full[] = EFI_BOOT_FILE_NAME;
     const grub_efi_char16_t *tmp;
     const grub_efi_char16_t *bootarch = bootarch_full;
 
     for ( tmp = bootarch_full ; *tmp ; tmp++ ) {
-        if ( *tmp == L'\\' )
+        if ( *tmp == '\\' )
             bootarch = ( tmp + 1 );
     }
     return bootarch;
@@ -85,8 +92,9 @@ static void read_grub_file ( struct vdisk_file *vfile, void *data,
  */
 static void efi_patch_bcd ( struct vdisk_file *vfile __unused, void *data,
                 size_t offset, size_t len ) {
-    static const wchar_t search[] = L".exe";
-    static const wchar_t replace[] = L".efi";
+    // .exe .efi
+    static const char16_t search[] = { 0x2e, 0x65, 0x78, 0x65, 0x00 };
+    static const char16_t replace[] = { 0x2e, 0x65, 0x66, 0x69, 0x00 };
     size_t i;
 
     /* Do nothing if BCD patching is disabled */
@@ -98,8 +106,8 @@ static void efi_patch_bcd ( struct vdisk_file *vfile __unused, void *data,
      * both BIOS and UEFI systems.
      */
     for ( i = 0 ; ( i + sizeof ( search ) ) < len ; i++ ) {
-        if ( wwcscasecmp ( ( data + i ), search ) == 0 ) {
-            memcpy ( ( data + i ), replace, sizeof ( replace ) );
+        if ( wwcscasecmp ( (void *) ( (char *) data + i ), search ) == 0 ) {
+            memcpy ( (void *) ( (char *) data + i ), replace, sizeof ( replace ) );
             DBG ( "...patched BCD at 0x%lx: \"%ls\" to \"%ls\"\n",
                   ( offset + i ), search, replace );
         }

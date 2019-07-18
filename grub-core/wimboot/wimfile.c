@@ -79,7 +79,7 @@ static void wim_read_file ( struct vdisk_file *file, void *data,
  * @ret file        Virtual file, or NULL if not found
  */
 struct vdisk_file * wim_add_file ( struct vdisk_file *file, unsigned int index,
-                   const wchar_t *path, const wchar_t *wname ) {
+                   const char16_t *path, const char16_t *wname ) {
     static unsigned int wim_file_idx = 0;
     struct wim_resource_header meta;
     struct wim_file *wfile;

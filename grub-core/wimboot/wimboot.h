@@ -35,6 +35,7 @@ extern int cmdline_rawwim;
 extern int cmdline_gui;
 extern int cmdline_pause;
 extern unsigned int cmdline_index;
+extern char cmdline_inject_dir[];
 
 extern unsigned int wimboot_nfiles;
 
@@ -55,13 +56,7 @@ struct grub_wimboot_context
 /** Directory into which files are injected */
 #define WIM_INJECT_DIR "\\Windows\\System32"
 
-#ifndef ASSEMBLY
-
 #include <stdint.h>
-
-/** Construct wide-character version of a string constant */
-#define L( x ) _L ( x )
-#define _L( x ) L ## x
 
 /** Page size */
 #define PAGE_SIZE 4096
@@ -74,7 +69,5 @@ struct grub_wimboot_context
 
 /* Mark parameter as unused */
 #define __unused __attribute__ (( unused ))
-
-#endif /* ASSEMBLY */
 
 #endif /* _WIMBOOT_H */
