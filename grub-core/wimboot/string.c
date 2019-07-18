@@ -45,7 +45,7 @@ int wwcscasecmp ( const char16_t *str1, const char16_t *str2 ) {
     do {
         c1 = towupper ( *(str1++) );
         c2 = towupper ( *(str2++) );
-    } while ( ( c1 != L'\0' ) && ( c1 == c2 ) );
+    } while ( ( c1 != 0 ) && ( c1 == c2 ) );
 
     return ( c1 - c2 );
 }
@@ -78,4 +78,21 @@ char16_t * wcschr ( const char16_t *str, char16_t c ) {
             return ( ( char16_t * )str );
     }
     return NULL;
+}
+
+size_t mbstowcs ( char16_t *dst, const char *src, size_t size ) {
+    if ( !dst || !src )
+        return 0;
+    char *p;
+    char16_t *q;
+    size_t i;
+    p = (char *) src;
+    q = dst;
+    for ( i=1; i<=size; i++ ) {
+        *q++ = *p++;
+        if ( *p == '\0' )
+            break;
+    }
+    *q = 0;
+    return i;
 }

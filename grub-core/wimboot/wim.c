@@ -462,9 +462,9 @@ int wim_path ( struct vdisk_file *file, struct wim_header *header,
     /* Find directory entry */
     name = memcpy ( path_copy, path, sizeof ( path_copy ) );
     do {
-        next = wcschr ( name, L'\\' );
+        next = wcschr ( name, '\\' );
         if ( next )
-            *next = L'\0';
+            *next = 0;
         *offset = direntry->subdir;
         if ( ( rc = wim_direntry ( file, header, meta, name, offset,
                        direntry ) ) != 0 )

@@ -28,7 +28,6 @@
 #include <string.h>
 #include "wimboot.h"
 #include "vdisk.h"
-#include "pause.h"
 #include "efi.h"
 #include "efipath.h"
 #include "efiboot.h"
@@ -84,6 +83,15 @@ efi_open_protocol_wrapper ( grub_efi_handle_t handle, grub_efi_guid_t *protocol,
     return 0;
 }
 #endif
+
+static void pause (void)
+{
+    /* Wait for keypress, prompting unless inhibited */
+    printf ( "Press any key to continue booting..." );
+    grub_getkey();
+    printf ( "\n" );
+}
+
 /**
  * Boot from EFI device
  *

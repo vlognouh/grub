@@ -80,7 +80,4 @@ efi_devpath_end_init ( grub_efi_device_path_protocol_t *path ) {
                GRUB_EFI_END_ENTIRE_DEVICE_PATH_SUBTYPE, sizeof ( *path ) );
 }
 
-extern grub_efi_device_path_protocol_t *
-efi_devpath_end ( grub_efi_device_path_protocol_t *path );
-
 #endif /* _EFIPATH_H */

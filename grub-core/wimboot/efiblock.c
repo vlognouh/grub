@@ -72,11 +72,10 @@ static grub_efi_status_t
 efi_read_blocks ( grub_efi_block_io_t *this, grub_efi_uint32_t media, grub_efi_lba_t lba,
           grub_efi_uintn_t len, void *data ) {
     struct efi_block *block =
-        container_of ( this, struct efi_block, block );
-    void *retaddr = __builtin_return_address ( 0 );
+        CR ( this, struct efi_block, block );
 
-    DBG ( "EFI %s read media %08x LBA 0x%llx to %p+%lx -> %p\n",
-           block->name, media, lba, data, ( ( size_t ) len ), retaddr );
+    DBG ( "EFI %s read media %08x LBA 0x%llx to %p+%lx\n",
+           block->name, media, lba, data, ( ( size_t ) len ) );
     vdisk_read ( ( lba + block->lba ), ( len / VDISK_SECTOR_SIZE ), data );
     return 0;
 }
