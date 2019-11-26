@@ -1690,6 +1690,9 @@ struct grub_efi_block_io
 };
 typedef struct grub_efi_block_io grub_efi_block_io_t;
 
+#define CR(RECORD, TYPE, FIELD) \
+      ((TYPE *) ((char *) (RECORD) - (char *) &(((TYPE *) 0)->FIELD)))
+
 #if (GRUB_TARGET_SIZEOF_VOID_P == 4) || defined (__ia64__) \
   || defined (__aarch64__) || defined (__MINGW64__) || defined (__CYGWIN__) \
   || defined(__riscv)
