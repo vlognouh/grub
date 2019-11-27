@@ -2518,3 +2518,28 @@ module = {
   common = commands/i386/wrmsr.c;
   enable = x86;
 };
+
+module = {
+  name = wimboot;
+  cflags = '-Wno-vla';
+  cppflags = '-I$(srcdir)/wimboot';
+  common = wimboot/wimboot.c;
+  common = wimboot/cpio.c;
+  common = wimboot/efi.c;
+  common = wimboot/efiblock.c;
+  common = wimboot/efiboot.c;
+  common = wimboot/efifile.c;
+  common = wimboot/efiguid.c;
+  common = wimboot/efipath.c;
+  common = wimboot/huffman.c;
+  common = wimboot/lzx.c;
+  common = wimboot/pause.c;
+  common = wimboot/sha1.c;
+  common = wimboot/string.c;
+  common = wimboot/vdisk.c;
+  common = wimboot/wim.c;
+  common = wimboot/wimfile.c;
+  common = wimboot/wimpatch.c;
+  enable = i386_efi;
+  enable = x86_64_efi;
+};
