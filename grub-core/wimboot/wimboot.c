@@ -294,7 +294,7 @@ grub_cmd_wimboot (grub_extcmd_context_t ctxt,
   else
     cmdline_index = 0;
   if (state[WIMBOOT_INJECT].set)
-    grub_strcpy (cmdline_inject_dir, state[WIMBOOT_INDEX].arg);
+    grub_strcpy (cmdline_inject_dir, state[WIMBOOT_INJECT].arg);
 
   wimboot_nfiles = wimboot_ctx.nfiles;
   DBG ( "Extract files\n" );
