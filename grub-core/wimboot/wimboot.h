@@ -63,8 +63,10 @@ struct grub_wimboot_context
 
 /** Debugging output */
 #define DBG(...) do {                        \
+        if (0) { \
             printf ( __VA_ARGS__ );            \
-           \ // grub_getkey ();            \
+            grub_getkey ();            \
+        } \
     } while ( 0 )
 
 /* Mark parameter as unused */
